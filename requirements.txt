@@ -1,0 +1,4 @@
+requests
+coincurve
+mnemonic
+bip32utils
