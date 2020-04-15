@@ -4,6 +4,7 @@ import base58
 import base64
 import os
 import hashlib
+import json
 from coincurve.keys import PrivateKey
 from coincurve import verify_signature
 
@@ -58,12 +59,12 @@ class Service(User):
     def api_call(self, endpoint, data):
         api_token = requests.post(
             '{}{}'.format(self.domain, '/get-api-token'),
-            {
-                'bulletin_secret': self.username_signature
-            }).json()
+            json.dumps({
+                'username_signature': self.username_signature
+            }), headers={'content-type': 'application/json'}).json()
         if not api_token.get('api_uuid'):
             return {'status': 'error', 'message': 'api error'}
-        request_signature = base64.b64encode(self.key.sign(api_token['api_uuid'].encode())).decode("utf-8")
+        request_signature = base64.b64encode(self.key.sign(hashlib.sha256(api_token['api_uuid'].encode()).hexdigest().encode())).decode("utf-8")
         return requests.post(
             '{}{}'.format(self.domain, endpoint),
             data,
@@ -140,7 +141,7 @@ class CenterIdentity:
         if not isinstance(user, User):
             user = User.from_dict(user)
         if hash_session_id:
-            session_id = hashlib.sha256(session_id).hexdigest()
+            session_id = hashlib.sha256(session_id.encode()).hexdigest()
         return verify_signature(
             base64.b64decode(signature),
             session_id.encode(),
