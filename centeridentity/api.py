@@ -21,25 +21,23 @@ class User:
 
 class Service(User):
     domain = 'http://0.0.0.0:8000'
+    def __init__(self, username, wif):
+        self.wif = wif
+        print(wif)
+        self.key = PrivateKey.from_hex(binascii.hexlify(base58.b58decode(wif))[2:-10].decode())
+        self.public_key = self.key.public_key
+        self.username = username
+        self.username_signature = self.generate_service_username_signature()
+
     @classmethod
     def generate(cls, username):
-        inst = cls()
         num = os.urandom(32).hex()
-        inst.wif = cls.to_wif(num)
+        wif = cls.to_wif(num)
+        inst = cls(username, wif)
         inst.key = PrivateKey.from_hex(num)
         inst.public_key = inst.key.public_key
         inst.username = username
         inst.username_signature = base64.b64encode(inst.key.sign(inst.username.encode("utf-8"))).decode("utf-8")
-        return inst
-
-    @classmethod
-    def revive(cls, username, wif):
-        inst = cls()
-        inst.wif = wif
-        inst.key = PrivateKey.from_hex(binascii.hexlify(base58.b58decode(wif))[2:-10].decode())
-        inst.public_key = inst.key.public_key
-        inst.username = username
-        inst.username_signature = inst.generate_service_username_signature()
         return inst
 
     def generate_service_username_signature(self):
@@ -82,19 +80,34 @@ class Service(User):
 
 
 class CenterIdentity:
-    def __init__(self, service, username=None):
-        self.service = service
+    def __init__(self, username, wif):
+        self.service = Service(username, wif)
+
+    @classmethod
+    def generate(cls, username):
+        service = Service.generate(username)
+        return cls(
+            service.username,
+            service.wif
+        )
 
     @classmethod
     def create_service(cls, username):
         return Service.generate(username)
 
     @classmethod
-    def revive_service(cls, username, wif):
-        return Service.revive(username, wif)
+    def get_service(cls, username, wif):
+        return Service(username, wif)
 
     @classmethod
-    def revive_user(cls, data):
+    def from_dict(cls, data):
+        return User.from_dict({
+            'username': data['username'],
+            'wif': data['wif']
+        })
+
+    @classmethod
+    def user_from_dict(cls, data):
         return User.from_dict(data)
 
     def add_user(self, user):

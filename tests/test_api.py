@@ -9,9 +9,14 @@ sys.path.append(dirname(__file__) + '/..')
 
 class Test(TestCase):
 
-    def test_revive_user(self):
+    def test_generate_service(self):
+        service = CenterIdentity.generate('test_service')
 
-        user = CenterIdentity.revive_user({
+        self.assertIsNotNone(service)
+
+    def test_user_from_dict(self):
+
+        user = CenterIdentity.user_from_dict({
             'username': 'test_service',
             'username_signature': 'MEUCIQDMGiwL5unMr4joJTWaNudo0NeIqGIkK/+DeQNK3wdeqgIgIWmqe2vILDcA1TPxNDuXJavt6K5MEUtJgZRF4q7LB1M=',
             'public_key': '030727d998882093dea970377f50e5d203ac805003e9c9b390aed3ae6bda05460d'
@@ -22,17 +27,15 @@ class Test(TestCase):
 
     def test_add_user(self):
         # just creating a service out of thin air
-        service = CenterIdentity.revive_service(
+        ci = CenterIdentity(
             'test_service',
             'L38yoTWooppsQD4FubNfg9BmhZSvec5jnQMxLKD3si2GHA3g9gJk'
         )
-        print(service.username_signature)
-        ci = CenterIdentity(service)
 
-        # revive a user from a dict that should come from another center identity library
+        # instantiate a user from a dict that should come from another center identity library
         # you should not have to create a dict manually
-        # should be CenterIdentity.revive_user(data)
-        user = CenterIdentity.revive_user({
+        # should be CenterIdentity.user(data)
+        user = CenterIdentity.user_from_dict({
             'username': 'test_service',
             'username_signature': 'MEUCIQDMGiwL5unMr4joJTWaNudo0NeIqGIkK/+DeQNK3wdeqgIgIWmqe2vILDcA1TPxNDuXJavt6K5MEUtJgZRF4q7LB1M=',
             'public_key': '030727d998882093dea970377f50e5d203ac805003e9c9b390aed3ae6bda05460d'
@@ -42,10 +45,10 @@ class Test(TestCase):
         self.assertDictEqual({'status': True}, result)
 
     def test_authenticate_user(self):
-        # revive a user from a dict that should come from another center identity library
+        # instantiate a user from a dict that should come from another center identity library
         # you should not have to create a dict manually
-        # should be CenterIdentity.revive_user(data)
-        user = CenterIdentity.revive_user({
+        # should be CenterIdentity.user(data)
+        user = CenterIdentity.user_from_dict({
             'username': 'test_service',
             'username_signature': 'MEUCIQDMGiwL5unMr4joJTWaNudo0NeIqGIkK/+DeQNK3wdeqgIgIWmqe2vILDcA1TPxNDuXJavt6K5MEUtJgZRF4q7LB1M=',
             'public_key': '030727d998882093dea970377f50e5d203ac805003e9c9b390aed3ae6bda05460d'
