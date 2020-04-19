@@ -1,7 +1,7 @@
 import sys
 from os.path import dirname
 from unittest import TestCase
-from centeridentity.api import CenterIdentity
+from centeridentity.api import CenterIdentity, User
 
 
 sys.path.append(dirname(__file__) + '/..')
@@ -28,36 +28,63 @@ class Test(TestCase):
     def test_add_user(self):
         # just creating a service out of thin air
         ci = CenterIdentity(
-            'test_service',
-            'L38yoTWooppsQD4FubNfg9BmhZSvec5jnQMxLKD3si2GHA3g9gJk'
+            'L38yoTWooppsQD4FubNfg9BmhZSvec5jnQMxLKD3si2GHA3g9gJk',
+            'test_service'
         )
 
         # instantiate a user from a dict that should come from another center identity library
         # you should not have to create a dict manually
         # should be CenterIdentity.user(data)
-        user = CenterIdentity.user_from_dict({
+        post_data = {
             'username': 'test_service',
             'username_signature': 'MEUCIQDMGiwL5unMr4joJTWaNudo0NeIqGIkK/+DeQNK3wdeqgIgIWmqe2vILDcA1TPxNDuXJavt6K5MEUtJgZRF4q7LB1M=',
             'public_key': '030727d998882093dea970377f50e5d203ac805003e9c9b390aed3ae6bda05460d'
-        })
+        }
 
-        result = ci.add_user(user)
+        result = ci.add_user(post_data)
         self.assertDictEqual({'status': True}, result)
+
+    def test_get_user(self):
+        # just creating a service out of thin air
+        ci = CenterIdentity(
+            'L38yoTWooppsQD4FubNfg9BmhZSvec5jnQMxLKD3si2GHA3g9gJk',
+            'test_service'
+        )
+
+        # instantiate a user from a dict that should come from another center identity library
+        # you should not have to create a dict manually
+        # should be CenterIdentity.user(data)
+        post_data_for_add = {
+            'username': 'test_service',
+            'username_signature': 'MEUCIQDMGiwL5unMr4joJTWaNudo0NeIqGIkK/+DeQNK3wdeqgIgIWmqe2vILDcA1TPxNDuXJavt6K5MEUtJgZRF4q7LB1M=',
+            'public_key': '030727d998882093dea970377f50e5d203ac805003e9c9b390aed3ae6bda05460d'
+        }
+        result = ci.add_user(post_data_for_add)
+
+        post_data_for_get = {
+            'username_signature': 'MEUCIQDMGiwL5unMr4joJTWaNudo0NeIqGIkK/+DeQNK3wdeqgIgIWmqe2vILDcA1TPxNDuXJavt6K5MEUtJgZRF4q7LB1M=',
+        }
+        user = ci.get_user(post_data_for_get)
+        self.assertIsInstance(user, User)
+        self.assertEqual(user.username, 'test_service')
+        self.assertEqual(user.username_signature, 'MEUCIQDMGiwL5unMr4joJTWaNudo0NeIqGIkK/+DeQNK3wdeqgIgIWmqe2vILDcA1TPxNDuXJavt6K5MEUtJgZRF4q7LB1M=')
+        self.assertEqual(user.public_key, '030727d998882093dea970377f50e5d203ac805003e9c9b390aed3ae6bda05460d')
 
     def test_authenticate_user(self):
         # instantiate a user from a dict that should come from another center identity library
         # you should not have to create a dict manually
         # should be CenterIdentity.user(data)
-        user = CenterIdentity.user_from_dict({
+        post_data = {
             'username': 'test_service',
             'username_signature': 'MEUCIQDMGiwL5unMr4joJTWaNudo0NeIqGIkK/+DeQNK3wdeqgIgIWmqe2vILDcA1TPxNDuXJavt6K5MEUtJgZRF4q7LB1M=',
-            'public_key': '030727d998882093dea970377f50e5d203ac805003e9c9b390aed3ae6bda05460d'
-        })
+            'public_key': '030727d998882093dea970377f50e5d203ac805003e9c9b390aed3ae6bda05460d',
+            'session_id_signature': 'MEUCIQDMGiwL5unMr4joJTWaNudo0NeIqGIkK/+DeQNK3wdeqgIgIWmqe2vILDcA1TPxNDuXJavt6K5MEUtJgZRF4q7LB1M='
+        }
 
-        session_id_signature = 'MEUCIQDMGiwL5unMr4joJTWaNudo0NeIqGIkK/+DeQNK3wdeqgIgIWmqe2vILDcA1TPxNDuXJavt6K5MEUtJgZRF4q7LB1M='
+        session_id = 'test_service'
+
         result = CenterIdentity.authenticate(
-            session_id_signature,
-            'test_service',
-            user
+            session_id,
+            post_data
         )
         self.assertEqual(result, True)
