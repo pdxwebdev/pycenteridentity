@@ -3,5 +3,5 @@ coincurve
 mnemonic
 bip32utils
 pycryptodome
--e git+https://github.com/pdxwebdev/eccsnacks#egg=eccsnacks
+eccsnacks
 pbkdf2
