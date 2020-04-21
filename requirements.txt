@@ -5,3 +5,4 @@ bip32utils
 pycryptodome
 eccsnacks
 pbkdf2
+base58
