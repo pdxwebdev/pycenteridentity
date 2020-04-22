@@ -241,10 +241,8 @@ class CenterIdentity:
         )
         return User.from_dict(user_data)
 
-    def authenticate(self, session_id, post_data, hash_session_id=False):
+    def authenticate(self, session_id, post_data, hash_session_id=True):
         user = self.get_user(post_data)
-        if not isinstance(user, User):
-            user = User.from_dict(user)
         if hash_session_id:
             session_id = hashlib.sha256(session_id.encode()).hexdigest()
         return verify_signature(
