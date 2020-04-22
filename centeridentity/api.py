@@ -108,15 +108,15 @@ class Service(User):
         return base58.b58encode(binascii.unhexlify(final_key)).decode('utf-8')
 
     def api_call(self, endpoint, data):
-        api_token = requests.post(
+        response = requests.post(
             '{}{}'.format(self.domain, '/get-api-token'),
             json.dumps({
                 'username_signature': self.username_signature
             }), headers={'content-type': 'application/json'}).json()
-        if not api_token.get('api_uuid'):
-            return {'status': 'error', 'message': 'api error'}
+        if not response.get('api_uuid'):
+            raise Exception(response)
         request_signature = base64.b64encode(self.key.sign(hashlib.sha256(
-            api_token['api_uuid'].encode()).hexdigest().encode())).decode("utf-8")
+            response['api_uuid'].encode()).hexdigest().encode())).decode("utf-8")
         return requests.post(
             '{}{}'.format(self.domain, endpoint),
             json.dumps(data),
