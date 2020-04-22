@@ -66,7 +66,7 @@ class User:
 
 
 class Service(User):
-    domain = 'http://0.0.0.0:8000'
+    domain = 'https://centeridentity.com'
 
     def __init__(self, wif, username):
         self.wif = wif
