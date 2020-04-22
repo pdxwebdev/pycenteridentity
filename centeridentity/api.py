@@ -245,8 +245,9 @@ class CenterIdentity:
         user = self.get_user(post_data)
         if hash_session_id:
             session_id = hashlib.sha256(session_id.encode()).hexdigest()
-        return verify_signature(
+        result = verify_signature(
             base64.b64decode(post_data['session_id_signature']),
             session_id.encode(),
             bytes.fromhex(user.public_key)
         )
+        return user if result is True else None
