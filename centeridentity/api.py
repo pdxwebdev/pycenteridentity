@@ -58,6 +58,14 @@ class User:
         }
 
     @property
+    def to_dict(self):
+        return {
+            'public_key': self.public_key_hex,
+            'username_signature': self.username_signature,
+            'username': self.username
+        }
+
+    @property
     def public_key_hex(self):
         if isinstance(self.public_key, PublicKey):
             return self.public_key.format().hex()
@@ -155,7 +163,7 @@ class Service(User):
         iv = enc[:16]
         cipher = AES.new(self.cipher_key, AES.MODE_CBC, iv)
         s = cipher.decrypt(enc[16:])
-        return json.loads(base64.b64decode(s[0:-ord(s.decode('latin1')[-1])]))
+        return json.loads(base64.b64decode(s[0:-ord(s.decode('latin1')[-1])]).decode())
 
 
 class CenterIdentity:
