@@ -31,7 +31,7 @@ class Test(TestCase):
             'L38yoTWooppsQD4FubNfg9BmhZSvec5jnQMxLKD3si2GHA3g9gJk',
             'test_service'
         )
-
+        ci.service.domain = 'http://0.0.0.0:8000'
         # instantiate a user from a dict that should come from another center identity library
         # you should not have to create a dict manually
         # should be CenterIdentity.user(data)
@@ -50,6 +50,7 @@ class Test(TestCase):
             'L38yoTWooppsQD4FubNfg9BmhZSvec5jnQMxLKD3si2GHA3g9gJk',
             'test_service'
         )
+        ci.service.domain = 'http://0.0.0.0:8000'
 
         # instantiate a user from a dict that should come from another center identity library
         # you should not have to create a dict manually
@@ -74,6 +75,11 @@ class Test(TestCase):
         # instantiate a user from a dict that should come from another center identity library
         # you should not have to create a dict manually
         # should be CenterIdentity.user(data)
+        ci = CenterIdentity(
+            'L38yoTWooppsQD4FubNfg9BmhZSvec5jnQMxLKD3si2GHA3g9gJk',
+            'test_service'
+        )
+        ci.service.domain = 'http://0.0.0.0:8000'
         post_data = {
             'username': 'test_service',
             'username_signature': 'MEUCIQDMGiwL5unMr4joJTWaNudo0NeIqGIkK/+DeQNK3wdeqgIgIWmqe2vILDcA1TPxNDuXJavt6K5MEUtJgZRF4q7LB1M=',
@@ -83,8 +89,9 @@ class Test(TestCase):
 
         session_id = 'test_service'
 
-        result = CenterIdentity.authenticate(
+        result = ci.authenticate(
             session_id,
-            post_data
+            post_data,
+            hash_session_id=False
         )
-        self.assertEqual(result, True)
+        self.assertIsInstance(result, User)
