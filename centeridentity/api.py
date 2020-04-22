@@ -241,9 +241,8 @@ class CenterIdentity:
         )
         return User.from_dict(user_data)
 
-    @classmethod
-    def authenticate(cls, session_id, post_data, hash_session_id=False):
-        user = CenterIdentity.user_from_dict(post_data)
+    def authenticate(self, session_id, post_data, hash_session_id=False):
+        user = self.get_user(post_data)
         if not isinstance(user, User):
             user = User.from_dict(user)
         if hash_session_id:
