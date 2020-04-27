@@ -8,6 +8,8 @@ sys.path.append(dirname(__file__) + '/..')
 
 
 class Test(TestCase):
+    def setUp(self):
+        self.domain = 'http://0.0.0.0:8000'
 
     def test_generate_service(self):
         service = CenterIdentity.generate('test_service')
@@ -31,7 +33,7 @@ class Test(TestCase):
             'L38yoTWooppsQD4FubNfg9BmhZSvec5jnQMxLKD3si2GHA3g9gJk',
             'test_service'
         )
-        ci.service.domain = 'http://0.0.0.0:8000'
+        ci.service.domain = self.domain
         # instantiate a user from a dict that should come from another center identity library
         # you should not have to create a dict manually
         # should be CenterIdentity.user(data)
@@ -50,7 +52,7 @@ class Test(TestCase):
             'L38yoTWooppsQD4FubNfg9BmhZSvec5jnQMxLKD3si2GHA3g9gJk',
             'test_service'
         )
-        ci.service.domain = 'http://0.0.0.0:8000'
+        ci.service.domain = self.domain
 
         # instantiate a user from a dict that should come from another center identity library
         # you should not have to create a dict manually
@@ -77,7 +79,7 @@ class Test(TestCase):
             'L38yoTWooppsQD4FubNfg9BmhZSvec5jnQMxLKD3si2GHA3g9gJk',
             'test_service'
         )
-        ci.service.domain = 'http://0.0.0.0:8000'
+        ci.service.domain = self.domain
 
         # instantiate a user from a dict that should come from another center identity library
         # you should not have to create a dict manually
@@ -111,7 +113,7 @@ class Test(TestCase):
             'L38yoTWooppsQD4FubNfg9BmhZSvec5jnQMxLKD3si2GHA3g9gJk',
             'test_service'
         )
-        ci.service.domain = 'http://0.0.0.0:8000'
+        ci.service.domain = self.domain
         post_data = {
             'username': 'test_service',
             'username_signature': 'MEUCIQDMGiwL5unMr4joJTWaNudo0NeIqGIkK/+DeQNK3wdeqgIgIWmqe2vILDcA1TPxNDuXJavt6K5MEUtJgZRF4q7LB1M=',
