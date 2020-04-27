@@ -226,6 +226,8 @@ class CenterIdentity:
                 'rid': rid
             }
         )
+        if not user_data:
+            return None
         user_data['relationship'] = self.service.decrypt_relationship(user_data['relationship'])
         return User.from_dict({
             'username': user_data['relationship']['their_username'],
@@ -234,12 +236,13 @@ class CenterIdentity:
         })
 
     def remove_user(self, data):
-        data.update(self.to_dict)
+        user = User.from_dict(data)
+        data.update(self.service.to_dict)
         user_data = self.service.api_call(
             '/remove-user',
             data
         )
-        return User.from_dict(user_data)
+        return user_data
 
     def authenticate(self, session_id, post_data, hash_session_id=True):
         user = self.get_user(post_data)
